@@ -15,8 +15,8 @@ if {[file exists libload.tcl]} {
 }
 
 # global connect variables
-set dbuser root
-set dbpassword ""
+set dbuser test
+set dbpassword "test"
 set dbank mysqltcltest
 
 package require tcltest

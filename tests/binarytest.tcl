@@ -30,7 +30,7 @@ puts "test conection without encoding option"
 # I recommend always to use -encoding binary if you handle binary data
 # You can alway build multiple handles if you want handle binary and utf-8 data.
 
-set handle [mysqlconnect -user root -db uni]
+set handle [mysqlconnect -user test -db test]
 mysqlexec $handle "INSERT INTO Binarytest (data) VALUES ('[mysqlescape $binary]')"
 set id [mysqlinsertid $handle]
 
@@ -53,7 +53,7 @@ puts "Length in Mysql [mysqlsel $handle "SELECT LENGTH(data) from Binarytest whe
 
 
 puts "test with -encoding binary"
-set handle2 [mysqlconnect -user root -db uni -encoding binary]
+set handle2 [mysqlconnect -user test -db test -encoding binary]
 mysqlexec $handle2 "Update Binarytest set data = '[mysqlescape $binary]' where id=$id"
 mysqlsel $handle2 "SELECT data from Binarytest where id=$id"
 set nbinary [lindex [mysqlnext $handle2] 0]
@@ -75,7 +75,7 @@ puts "Length in Mysql [mysqlsel $handle2 "SELECT LENGTH(data) from Binarytest wh
 puts "test reading binary data but do not use -binary option but iso8859-1"
 # please do not try to read binary data if your system encoding is set to
 # utf-8. The converting from it will crash system
-set handle2 [mysqlconnect -user root -db uni -encoding iso8859-1]
+set handle2 [mysqlconnect -user test -db test -encoding iso8859-1]
 mysqlsel $handle2 "SELECT data from Binarytest where id=$id"
 set nbinary [lindex [mysqlnext $handle2] 0]
 set nfile [file tail $file].bin
@@ -92,9 +92,9 @@ if {[catch {exec cmp $file $nfile}]} {
 
 
 puts "test with -encoding iso8859-15"
-set handle3 [mysqlconnect -user root -db uni -encoding iso8859-15]
+set handle3 [mysqlconnect -user test -db test -encoding iso8859-15]
 # iso8859-1]
-set umlaute "ÄÖ äö ß Deutsch Umlaute 26"
+set umlaute "ï¿½ï¿½ ï¿½ï¿½ ï¿½ Deutsch Umlaute 26"
 mysqlexec $handle3 "Update Binarytest set data = '$umlaute' where id=$id"
 mysqlsel $handle3 "SELECT data from Binarytest where id=$id"
 set umlauteOut [lindex [mysqlnext $handle3] 0]

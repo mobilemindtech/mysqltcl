@@ -9,7 +9,7 @@ if {[file exists libload.tcl]} {
 
 puts "please observe memory consumption per top (Program break after reach 2000)"
 
-set c [mysqlconnect -u root -db uni]
+set c [mysqlconnect -u test -db test]
 set i 0
 set p 0
 while 1 {

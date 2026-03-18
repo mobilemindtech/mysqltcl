@@ -1,3 +1,15 @@
+Release 3.053
+-- hardening for large numeric values: use Tcl_WideInt for row counters and wide Tcl objects for large results (mysql::sel/mysql::result/mysql::seek/mysql::nextresult)
+-- mysqlinsertid now returns wide integer value to avoid truncation on large AUTO_INCREMENT ids
+-- mysqlexec affected row handling updated for my_ulonglong and wide Tcl result objects
+-- fix error handling return codes in mysql::autocommit/mysql::commit/mysql::rollback/mysql::setserveroption/mysql::shutdown (return TCL_ERROR on server error)
+-- fix connect cleanup paths: release handle/connection on mysql_real_connect conflict and on invalid -encoding value
+-- mysql 8 TLS mode setup in mysqlconnect refactored to remove redundant duplicated code paths
+-- prepared statements: mysql::pexecute now binds Tcl arguments to ? placeholders
+-- prepared statements: mysql::pselect supports statement-handle ?arg ...?, executes/stores result and returns row count
+-- prepared statements: mysql::pfetch returns next row as Tcl list (empty result on EOF)
+-- add/refresh prepared statement usage coverage in tests/prepared.test (including transaction flow)
+
 Release 3.052
 -- fix multiresult bug (column number)  (patch from Thikrallah I.Shreah)
 Release 3.051

@@ -1,0 +1,43 @@
+if {[file exists libload.tcl]} {
+    source libload.tcl
+} else {
+    source [file join [file dirname [info script]] libload.tcl]
+}
+
+set conn [mysqlconnect -user test -password test -db test]
+
+mysqlexec $conn "drop table if exists prepared_example"
+mysqlexec $conn "create table prepared_example(id int, name varchar(100))"
+
+set istmt [mysqlprepare $conn {insert into prepared_example (id, name) values (?, ?)}]
+mysqlpexecute $istmt 10 "Carlos"
+mysqlpexecute $istmt 11 [mysql::newnull]
+mysqlclose $istmt
+
+set sstmt [mysqlprepare $conn {select id, name from prepared_example where id >= ? order by id}]
+set rowcount [mysqlpselect $sstmt 10]
+puts "prepared select rowcount: $rowcount"
+
+while {[llength [set row [mysqlpfetch $sstmt]]]>0} {
+    puts "prepared row: $row"
+}
+
+mysqlclose $sstmt
+
+::mysql::autocommit $conn 0
+if {[catch {
+    ::mysql::exec $conn "insert into prepared_example (id, name) values (1, 'test1')"
+    ::mysql::exec $conn "insert into prepared_example (id, name) values (1, 'test2')"
+} err]} {
+    ::mysql::rollback $conn
+    error $err
+} else {
+    ::mysql::commit $conn
+}
+::mysql::autocommit $conn 1
+
+set rows [::mysql::sel $conn "select * from prepared_example"]
+
+puts $rows
+
+mysqlclose $conn
